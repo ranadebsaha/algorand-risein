@@ -1,0 +1,188 @@
+#pragma version 10
+#pragma typetrack false
+
+// smart_contracts.certificate_registry.contract.CertificateRegistry.__algopy_entrypoint_with_init() -> uint64:
+main:
+    intcblock 1
+    bytecblock 0x "certificates"
+    // smart_contracts/certificate_registry/contract.py:12
+    // class CertificateRegistry(ARC4Contract):
+    txn NumAppArgs
+    bz main_bare_routing@8
+    pushbytess 0x5766f7e7 0x3e95270e 0xbbea12db // method "register_certificate(byte[])void", method "verify_certificate(byte[])byte[]", method "transfer_certificate(byte[],byte[])void"
+    txna ApplicationArgs 0
+    match main_register_certificate_route@5 main_verify_certificate_route@6 main_transfer_certificate_route@7
+
+main_after_if_else@10:
+    // smart_contracts/certificate_registry/contract.py:12
+    // class CertificateRegistry(ARC4Contract):
+    pushint 0 // 0
+    return
+
+main_transfer_certificate_route@7:
+    // smart_contracts/certificate_registry/contract.py:47
+    // @arc4.abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/certificate_registry/contract.py:12
+    // class CertificateRegistry(ARC4Contract):
+    txna ApplicationArgs 1
+    extract 2 0
+    txna ApplicationArgs 2
+    extract 2 0
+    // smart_contracts/certificate_registry/contract.py:47
+    // @arc4.abimethod
+    callsub transfer_certificate
+    intc_0 // 1
+    return
+
+main_verify_certificate_route@6:
+    // smart_contracts/certificate_registry/contract.py:35
+    // @arc4.abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/certificate_registry/contract.py:12
+    // class CertificateRegistry(ARC4Contract):
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/certificate_registry/contract.py:35
+    // @arc4.abimethod
+    callsub verify_certificate
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+main_register_certificate_route@5:
+    // smart_contracts/certificate_registry/contract.py:21
+    // @arc4.abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/certificate_registry/contract.py:12
+    // class CertificateRegistry(ARC4Contract):
+    txna ApplicationArgs 1
+    extract 2 0
+    // smart_contracts/certificate_registry/contract.py:21
+    // @arc4.abimethod
+    callsub register_certificate
+    intc_0 // 1
+    return
+
+main_bare_routing@8:
+    // smart_contracts/certificate_registry/contract.py:12
+    // class CertificateRegistry(ARC4Contract):
+    txn OnCompletion
+    bnz main_after_if_else@10
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    intc_0 // 1
+    return
+
+
+// smart_contracts.certificate_registry.contract.CertificateRegistry.register_certificate(cert_hash: bytes) -> void:
+register_certificate:
+    // smart_contracts/certificate_registry/contract.py:21-22
+    // @arc4.abimethod
+    // def register_certificate(self, cert_hash: Bytes) -> None:
+    proto 1 0
+    // smart_contracts/certificate_registry/contract.py:28
+    // existing_owner = self.certificates.get(cert_hash, default=Bytes(b""))
+    bytec_1 // "certificates"
+    frame_dig -1
+    concat
+    dup
+    box_get
+    bytec_0 // 0x
+    cover 2
+    select
+    // smart_contracts/certificate_registry/contract.py:30-31
+    // # Use the lowercase 'assert' keyword
+    // assert existing_owner == Bytes(b""), "Certificate hash is already registered."
+    bytec_0 // 0x
+    ==
+    assert // Certificate hash is already registered.
+    // smart_contracts/certificate_registry/contract.py:33
+    // self.certificates[cert_hash] = Txn.sender.bytes
+    txn Sender
+    dig 1
+    box_del
+    pop
+    box_put
+    retsub
+
+
+// smart_contracts.certificate_registry.contract.CertificateRegistry.verify_certificate(cert_hash: bytes) -> bytes:
+verify_certificate:
+    // smart_contracts/certificate_registry/contract.py:35-36
+    // @arc4.abimethod
+    // def verify_certificate(self, cert_hash: Bytes) -> Bytes:
+    proto 1 1
+    // smart_contracts/certificate_registry/contract.py:44
+    // owner = self.certificates.get(cert_hash, default=Bytes(b""))
+    bytec_1 // "certificates"
+    frame_dig -1
+    concat
+    box_get
+    bytec_0 // 0x
+    cover 2
+    select
+    // smart_contracts/certificate_registry/contract.py:45
+    // return owner
+    retsub
+
+
+// smart_contracts.certificate_registry.contract.CertificateRegistry.transfer_certificate(cert_hash: bytes, new_owner: bytes) -> void:
+transfer_certificate:
+    // smart_contracts/certificate_registry/contract.py:47-48
+    // @arc4.abimethod
+    // def transfer_certificate(self, cert_hash: Bytes, new_owner: Bytes) -> None:
+    proto 2 0
+    // smart_contracts/certificate_registry/contract.py:56
+    // current_owner = self.certificates.get(cert_hash, default=Bytes(b""))
+    bytec_1 // "certificates"
+    frame_dig -2
+    concat
+    dup
+    box_get
+    bytec_0 // 0x
+    cover 2
+    select
+    // smart_contracts/certificate_registry/contract.py:58-59
+    // # Use the lowercase 'assert' keyword
+    // assert current_owner != Bytes(b""), "Certificate not found or not registered."
+    dup
+    bytec_0 // 0x
+    !=
+    assert // Certificate not found or not registered.
+    // smart_contracts/certificate_registry/contract.py:61-62
+    // # Use the lowercase 'assert' keyword
+    // assert current_owner == Txn.sender.bytes, "Permission denied: Only the current owner can transfer."
+    txn Sender
+    ==
+    assert // Permission denied: Only the current owner can transfer.
+    // smart_contracts/certificate_registry/contract.py:64
+    // self.certificates[cert_hash] = new_owner
+    dup
+    box_del
+    pop
+    frame_dig -1
+    box_put
+    retsub
