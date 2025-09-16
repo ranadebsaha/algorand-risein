@@ -49,7 +49,7 @@ def mint_nft(nft_metadata):
     total=1,
     default_frozen=False,
     unit_name="POAP",
-    asset_name="POAP-RiseHack25-0916",
+    asset_name="POAP-RiseHack25-RDS",
     manager="",
     reserve="",
     freeze="",
