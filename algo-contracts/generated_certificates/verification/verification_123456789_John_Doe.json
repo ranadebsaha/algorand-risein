@@ -1,0 +1,24 @@
+{
+  "certificate_type": "POAP_ATTENDANCE",
+  "recipient_name": "John Doe",
+  "recipient_address": "REPLACE_WITH_ACTUAL_WALLET_ADDRESS",
+  "asset_id": 123456789,
+  "event_data": {
+    "event": "Rise Hackathon 2025",
+    "organizer": "University Institute of Technology",
+    "date": "September 16, 2025"
+  },
+  "nft_metadata": {
+    "asset_id": 123456789,
+    "name": "POAP-123456789",
+    "creator": "",
+    "url": "",
+    "metadata_hash": "",
+    "total": 1,
+    "unit_name": "POAP"
+  },
+  "verification_hash": "c0cfac19a84de883516cf88abfe3803a8a10d543baa20b8dbe8f8550c661448b",
+  "generated_at": "2025-09-17T02:01:35.875675",
+  "verified_ownership": false,
+  "generator_version": "1.0.0"
+}
